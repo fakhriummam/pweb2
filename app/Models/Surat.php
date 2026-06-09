@@ -7,8 +7,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Surat extends Model
 {
-    protected $fillable = ['nomor_surat', 'tanggal_mulai_pulang', 'tanggal_kembali', 'alasan_pulang', 'member_id'];
+    protected $table = 'surats';
 
+    protected $fillable = [
+        'nomor_surat',
+        'tanggal_mulai_pulang',
+        'tanggal_kembali',
+        'alasan_pulang',
+        'member_id'
+    ];
+
+    // Relasi tetap sama
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class, 'member_id');
