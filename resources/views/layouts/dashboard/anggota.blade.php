@@ -28,8 +28,8 @@
                     <td style="padding: 12px;">{{ $member->email }}</td>
                     <td style="padding: 12px;">
                         {{-- Styling badge status sederhana --}}
-                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; 
-                            background-color: {{ $member->status == 'active' ? '#e5f9e7' : '#fde8e8' }}; 
+                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;
+                            background-color: {{ $member->status == 'active' ? '#e5f9e7' : '#fde8e8' }};
                             color: {{ $member->status == 'active' ? '#1f7834' : '#c53030' }};">
                             {{ ucfirst($member->status) }}
                         </span>

@@ -13,4 +13,8 @@ Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard')
 Route::get('/dashboard/anggota',[DashboardController::class,'anggota'])->name('dashboard.anggota');
 // Route::get('/dashboard/surat', [DashboardController::class, 'semuaSurat'])->name('dashboard.surat');
 
-Route::resource('/dashboard/surat', SuratController::class);
+Route::resource('dashboard/surat', SuratController::class)->names([
+    'index'   => 'dashboard.surat.index',
+    'create'  => 'dashboard.surat.create',
+    'store'   => 'dashboard.surat.store',
+]);
