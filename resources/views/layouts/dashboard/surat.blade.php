@@ -39,7 +39,24 @@
 
                         <td style="padding: 12px;">{{ $s->tanggal_mulai_pulang }}</td>
                         <td style="padding: 12px; text-align: center;">
-                            <button style="color: #3498db; border: none; background: none; cursor: pointer;">Detail</button>
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('dashboard.surat.edit', $s->id) }}" class="btn btn-warning btn-sm"
+                                    style="text-decoration: none; background: #f1c40f; color: black; padding: 4px 8px; border-radius: 4px; margin-right: 5px;">
+                                    Edit
+                                </a>
+
+                                <form action="{{ route('dashboard.surat.destroy', $s->id) }}" method="POST"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus data surat ini?')"
+                                    style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                        style="background: #e74c3c; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer;">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+
                         </td>
                     </tr>
                 @empty

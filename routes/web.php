@@ -17,4 +17,7 @@ Route::resource('dashboard/surat', SuratController::class)->names([
     'index'   => 'dashboard.surat.index',
     'create'  => 'dashboard.surat.create',
     'store'   => 'dashboard.surat.store',
+    'edit'    => 'dashboard.surat.edit',
+    'update'  => 'dashboard.surat.update',
+    'destroy' => 'dashboard.surat.destroy',
 ]);
