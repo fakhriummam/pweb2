@@ -18,14 +18,16 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    
+
     // Proses Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout'); 
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('/dashboard/surat/{id}/cetak', [SuratController::class, 'cetakPdf'])->name('dashboard.surat.cetak');
 
     // Rute Internal Aplikasi Dashboard Santri yang dilindungi
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/anggota', [DashboardController::class, 'anggota'])->name('dashboard.anggota');
-    
+
     // Rute Resource Surat Izin Santri milikmu
     Route::resource('dashboard/surat', SuratController::class)->names([
         'index'   => 'dashboard.surat.index',

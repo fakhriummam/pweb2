@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Surat;
 use App\Models\Member;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuratController extends Controller
 {
@@ -32,25 +33,30 @@ class SuratController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validasi Input dari Form
         $validatedData = $request->validate([
-            'nomor_surat'          => 'required|unique:surats,nomor_surat|max:50',
-            'member_id'            => 'required|numeric',
+            'nomor_surat' => 'required|unique:surats,nomor_surat',
+            'member_id'            => 'required|exists:members,id',
             'tanggal_mulai_pulang' => 'required|date',
-            'tanggal_kembali'      => 'required|date',
-            'alasan_pulang'        => 'nullable|string'
-        ], [
-            // Pesan error kustom bahasa Indonesia
-            'nomor_surat.required' => 'Nomor surat wajib diisi.',
-            'nomor_surat.unique'   => 'Nomor surat tersebut sudah terdaftar di sistem.',
-            'member_id.required'   => 'Anggota pemohon wajib dipilih.'
+            'tanggal_kembali' => 'required|date',
+            'alasan_pulang' => 'nullable|string',
+            // Validasi berkas pendukung (Maksimal 2048 KB / 2 MB)
+            'berkas_pendukung' => 'nullable|file|mimes:jpg,png,pdf|max:2048',
         ]);
 
-        // 2. Simpan ke database menggunakan Mass Assignment Model Surat
+        // Jika santri/pengurus mengunggah berkas
+        if ($request->hasFile('berkas_pendukung')) {
+            $namaFile = time() . '_' . $request->file('berkas_pendukung')->getClientOriginalName();
+            // Simpan file ke storage/app/public/berkas_surat
+            $path = $request->file('berkas_pendukung')->storeAs('berkas_surat', $namaFile, 'public');
+            $validatedData['berkas_pendukung'] = $path;
+        }
+
+        // Ambil ID santri yang sedang login saat ini untuk dimasukkan ke data member_id
+        // $validatedData['member_id'] = auth()->id();
+
         Surat::create($validatedData);
 
-        // 3. Kembalikan ke halaman utama tabel surat dengan notifikasi sukses
-        return redirect()->route('dashboard.surat.index')->with('sukses', 'Surat permohonan kepulangan berhasil disimpan!');
+        return redirect()->route('dashboard.surat.index')->with('sukses', 'Data permohonan surat izin santri berhasil dikirim!');
     }
 
     /**
@@ -80,16 +86,19 @@ class SuratController extends Controller
         $surat = Surat::findOrFail($id);
 
         // Jalankan aturan validasi data server-side
-        $validatedData = $request->validate([
-            // Aturan unique diabaikan untuk ID surat ini sendiri agar bisa disimpan tanpa dianggap duplikat
-            'nomor_surat'          => 'required|max:50|unique:surats,nomor_surat,' . $surat->id,
-            'tanggal_mulai_pulang' => 'required|date',
-            'tanggal_kembali'      => 'required|date',
-            'alasan_pulang'        => 'nullable|string'
-        ], [
-            'nomor_surat.required' => 'Nomor surat wajib diisi.',
-            'nomor_surat.unique'   => 'Nomor surat ini telah terdaftar pada sistem.'
-        ]);
+        $validatedData = $request->validate(
+            [
+                // Aturan unique diabaikan untuk ID surat ini sendiri agar bisa disimpan tanpa dianggap duplikat
+                'nomor_surat' => 'required|max:50|unique:surats,nomor_surat,' . $surat->id,
+                'tanggal_mulai_pulang' => 'required|date',
+                'tanggal_kembali' => 'required|date',
+                'alasan_pulang' => 'nullable|string',
+            ],
+            [
+                'nomor_surat.required' => 'Nomor surat wajib diisi.',
+                'nomor_surat.unique' => 'Nomor surat ini telah terdaftar pada sistem.',
+            ],
+        );
 
         // Update entitas data menggunakan fungsi update Eloquent
         $surat->update($validatedData);
@@ -111,5 +120,17 @@ class SuratController extends Controller
 
         // Kembalikan ke halaman index dengan alert flash message pemberitahuan
         return redirect()->route('dashboard.surat.index')->with('sukses', 'Data surat berhasil dihapus dari sistem.');
+    }
+
+    public function cetakPdf($id)
+    {
+        $surat = Surat::findOrFail($id);
+
+        // Memanggil view cetak dan mengirimkan data $surat ke dalamnya
+        $pdf = Pdf::loadView('layouts.dashboard.cetak', compact('surat'));
+
+        // Menampilkan langsung PDF di browser (stream)
+        // return $pdf->stream('Surat_Izin_Santri_' . $surat->nomor_surat . '.pdf');
+        return $pdf->stream('Surat_Izin_Santri_' . $surat->id . '.pdf');
     }
 }
