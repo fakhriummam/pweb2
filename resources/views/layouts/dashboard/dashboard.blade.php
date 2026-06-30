@@ -20,7 +20,7 @@
             <nav class="navbar">
                 <div class="navbar-content">
                     <span class="user-name">Fakhri</span>
-                    <form action="#" method="POST">
+                    <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="logout-btn">Logout</button>
                     </form>
