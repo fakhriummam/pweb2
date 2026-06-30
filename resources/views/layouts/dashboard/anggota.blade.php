@@ -6,8 +6,14 @@
 <div class="card">
     <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>Daftar Anggota Asrama</h2>
-        <a href="#" class="btn" style="background-color: #2ecc71; font-size: 14px; color: white; text-decoration: none; padding: 8px 12px; border-radius: 4px;">+ Tambah Anggota</a>
+        <a href="{{ route('dashboard.anggota.create') }}" class="btn" style="background-color: #2ecc71; font-size: 14px; color: white; text-decoration: none; padding: 8px 12px; border-radius: 4px;">+ Tambah Anggota</a>
     </div>
+
+    @if (session('sukses'))
+        <div style="background-color: #d4edda; color: #155724; padding: 12px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #c3e6cb;">
+            {{ session('sukses') }}
+        </div>
+    @endif
 
     <table style="width: 100%; border-collapse: collapse; background: white;">
         <thead>
@@ -35,8 +41,12 @@
                         </span>
                     </td>
                     <td style="padding: 12px; text-align: center;">
-                        <button style="color: #3498db; border: none; background: none; cursor: pointer;">Edit</button> |
-                        <button style="color: #e74c3c; border: none; background: none; cursor: pointer;">Hapus</button>
+                        <a href="{{ route('dashboard.anggota.edit', $member->id) }}" style="color: #3498db; text-decoration: none; font-size: 14px; font-weight: bold;">Edit</a> |
+                        <form action="{{ route('dashboard.anggota.destroy', $member->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data anggota ini?')" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="color: #e74c3c; border: none; background: none; cursor: pointer; padding: 0; font-size: 14px; font-weight: bold; font-family: inherit;">Hapus</button>
+                        </form>
                     </td>
                 </tr>
             @empty

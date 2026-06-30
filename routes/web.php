@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MemberController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,7 +27,14 @@ Route::middleware(['auth'])->group(function () {
 
     // Rute Internal Aplikasi Dashboard Santri yang dilindungi
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/anggota', [DashboardController::class, 'anggota'])->name('dashboard.anggota');
+
+    // Rute CRUD Anggota Asrama Manual
+    Route::get('/dashboard/anggota', [MemberController::class, 'index'])->name('dashboard.anggota');
+    Route::get('/dashboard/anggota/create', [MemberController::class, 'create'])->name('dashboard.anggota.create');
+    Route::post('/dashboard/anggota', [MemberController::class, 'store'])->name('dashboard.anggota.store');
+    Route::get('/dashboard/anggota/{id}/edit', [MemberController::class, 'edit'])->name('dashboard.anggota.edit');
+    Route::put('/dashboard/anggota/{id}', [MemberController::class, 'update'])->name('dashboard.anggota.update');
+    Route::delete('/dashboard/anggota/{id}', [MemberController::class, 'destroy'])->name('dashboard.anggota.destroy');
 
     // Rute Resource Surat Izin Santri milikmu
     Route::resource('dashboard/surat', SuratController::class)->names([

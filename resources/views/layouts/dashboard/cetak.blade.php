@@ -61,7 +61,7 @@
         </tr>
         <tr>
             <td class="meta-label">Alasan Meninggalkan Pesantren</td>
-            <td>: {{ $s->alasan_pulang ?? 'Keperluan Keluarga' }}</td>
+            <td>: {{ $surat->alasan_pulang ?? 'Keperluan Keluarga' }}</td>
         </tr>
         <tr>
             <td class="meta-label">Status Berkas Lampiran</td>
